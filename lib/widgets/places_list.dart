@@ -22,15 +22,15 @@ class PlacesList extends StatelessWidget {
     return ListView.builder(
       itemCount: places.length,
       itemBuilder: (ctx, index) {
-        ListTile(
+        final place = places[index];
+        return ListTile(
           title: Text(
-            places[index].title,
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
+            place.title,
+            style: Theme.of(ctx).textTheme.titleMedium!.copyWith(
+              color: Theme.of(ctx).colorScheme.onSurface,
             ),
           ),
         );
-        return null;
       },
     );
   }
