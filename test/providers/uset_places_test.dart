@@ -11,7 +11,7 @@ void main() {
       final File image = File('path');
       final PlaceLocation location = PlaceLocation(
         latitude: 1,
-        longitide: 1,
+        longitude: 1,
         address: '',
       );
       final container = ProviderContainer();

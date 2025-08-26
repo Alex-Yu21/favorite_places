@@ -6,12 +6,12 @@ const uuid = Uuid();
 
 class PlaceLocation {
   final double latitude;
-  final double longitide;
+  final double longitude;
   final String address;
 
-  PlaceLocation({
+  const PlaceLocation({
     required this.latitude,
-    required this.longitide,
+    required this.longitude,
     required this.address,
   });
 }

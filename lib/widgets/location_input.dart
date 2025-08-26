@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:favorite_places/model/place.dart';
+import 'package:favorite_places/screens/map.dart';
 import 'package:favorite_places/secret.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps/google_maps.dart' hide Icon;
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 
@@ -24,9 +26,30 @@ class _LocationInputState extends State<LocationInput> {
       return '';
     }
     final lat = _pickedLocation!.latitude;
-    final lng = _pickedLocation!.longitide;
+    final lng = _pickedLocation!.longitude;
     return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng=16&size=600x300&maptype=roadmap&markers=color:blue%7C$lat,$lng&key=$api';
   }
+
+void _savePlace(double latitude, double longitude) {
+  final url = Uri.parse(
+      'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$api',
+    );
+
+    final response = await http.get(url);
+    final resData = json.decode(response.body);
+    final address = resData['results'][0]['formatted_address'];
+
+    setState(() {
+      _pickedLocation = PlaceLocation(
+        latitude: lat,
+        longitude: lng,
+        address: address,
+      );
+
+      _isGettingLocation = false;
+    });
+    widget.onSelectedLocation(_pickedLocation!);
+}
 
   void _getCurrentLocation() async {
     Location location = Location();
@@ -62,24 +85,20 @@ class _LocationInputState extends State<LocationInput> {
       return;
     }
 
-    final url = Uri.parse(
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=$lat,$lng&key=$api',
-    );
+    
+  }
 
-    final response = await http.get(url);
-    final resData = json.decode(response.body);
-    final address = resData['results'][0]['formatted_address'];
+  void _selecteOnMap() async {
+    final pickedLocation = await Navigator.of(
+      context,
+    ).push<LatLng>(MaterialPageRoute(builder: (ctx) => MapScreen()));
 
-    setState(() {
-      _pickedLocation = PlaceLocation(
-        latitude: lat,
-        longitide: lng,
-        address: address,
-      );
+    if (pickedLocation == null) {
+      return;
+    }
 
-      _isGettingLocation = false;
-    });
-    widget.onSelectedLocation(_pickedLocation!);
+
+
   }
 
   @override
@@ -128,7 +147,7 @@ class _LocationInputState extends State<LocationInput> {
               icon: Icon(Icons.location_on),
             ),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: _selecteOnMap,
               label: const Text('Selecte on map'),
               icon: Icon(Icons.map),
             ),
