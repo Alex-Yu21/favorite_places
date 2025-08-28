@@ -40,11 +40,13 @@ class _MapScreenState extends State<MapScreen> {
         ],
       ),
       body: GoogleMap(
-        onTap: (posintion) {
-          setState(() {
-            _pickedLocation = posintion;
-          });
-        },
+        onTap: widget.isSelecting
+            ? (posintion) {
+                setState(() {
+                  _pickedLocation = posintion;
+                });
+              }
+            : null,
         initialCameraPosition: CameraPosition(
           target: LatLng(widget.location.latitude, widget.location.longitude),
           zoom: 16,

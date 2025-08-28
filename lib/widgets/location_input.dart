@@ -30,8 +30,8 @@ class _LocationInputState extends State<LocationInput> {
     return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng=16&size=600x300&maptype=roadmap&markers=color:blue%7C$lat,$lng&key=$api';
   }
 
-void _savePlace(double latitude, double longitude) {
-  final url = Uri.parse(
+  void _savePlace(double latitude, double longitude) async {
+    final url = Uri.parse(
       'https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$api',
     );
 
@@ -41,15 +41,15 @@ void _savePlace(double latitude, double longitude) {
 
     setState(() {
       _pickedLocation = PlaceLocation(
-        latitude: lat,
-        longitude: lng,
+        latitude: latitude,
+        longitude: longitude,
         address: address,
       );
 
       _isGettingLocation = false;
     });
     widget.onSelectedLocation(_pickedLocation!);
-}
+  }
 
   void _getCurrentLocation() async {
     Location location = Location();
@@ -84,21 +84,18 @@ void _savePlace(double latitude, double longitude) {
     if (lat == null || lng == null) {
       return;
     }
-
-    
+    _savePlace(lat, lng);
   }
 
   void _selecteOnMap() async {
     final pickedLocation = await Navigator.of(
       context,
-    ).push<LatLng>(MaterialPageRoute(builder: (ctx) => MapScreen()));
+    ).push<LatLng>(MaterialPageRoute(builder: (ctx) => const MapScreen()));
 
     if (pickedLocation == null) {
       return;
     }
-
-
-
+    _savePlace(pickedLocation.lat.toDouble(), pickedLocation.lng.toDouble());
   }
 
   @override
